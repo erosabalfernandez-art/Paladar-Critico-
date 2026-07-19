@@ -1,0 +1,27 @@
+kind = "web"
+previewPath = "/"
+title = "Paladar Crítico"
+version = "1.0.0"
+id = "artifacts/cocina-opina"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 25140
+
+[services.development]
+run = "pnpm --filter @workspace/cocina-opina run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/cocina-opina", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/cocina-opina/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "25140"
+BASE_PATH = "/"
