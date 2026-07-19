@@ -5,7 +5,7 @@ import { useLocation, useParams } from "wouter";
 import { useCreateProduct, useUpdateProduct, useListCategories, useListAdminProducts } from "@workspace/api-client-react";
 import { useEffect, useMemo } from "react";
 import { toast } from "sonner";
-import { ArrowLeft, Save, Loader2, Image as ImageIcon } from "lucide-react";
+import { ArrowLeft, Save, Loader2 } from "lucide-react";
 import { Link } from "wouter";
 
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { RichEditor } from "@/components/ui/rich-editor";
+import { ImageUpload } from "@/components/ui/image-upload";
 
 const formSchema = z.object({
   title: z.string().min(2, "Título requerido"),
@@ -126,6 +128,8 @@ export function ProductForm() {
       if (name === "title" && !isEditing) {
         const generatedSlug = value.title
           ?.toLowerCase()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
           .replace(/[^a-z0-9]+/g, "-")
           .replace(/(^-|-$)+/g, "");
         if (generatedSlug) {
@@ -245,6 +249,35 @@ export function ProductForm() {
                       )}
                     />
                   </div>
+
+                  {/* Cover Image Upload */}
+                  <FormField
+                    control={form.control}
+                    name="coverImage"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Imagen de Portada</FormLabel>
+                        <FormControl>
+                          <ImageUpload
+                            value={field.value}
+                            onChange={field.onChange}
+                            label="Subir imagen de portada"
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          También puedes pegar una URL directamente:
+                        </FormDescription>
+                        <Input
+                          placeholder="https://..."
+                          value={field.value || ""}
+                          onChange={(e) => field.onChange(e.target.value)}
+                          className="mt-1"
+                        />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* Introduction — Rich Editor */}
                   <FormField
                     control={form.control}
                     name="introduction"
@@ -252,7 +285,12 @@ export function ProductForm() {
                       <FormItem>
                         <FormLabel>Introducción</FormLabel>
                         <FormControl>
-                          <Textarea placeholder="Escribe el párrafo introductorio de la reseña..." className="min-h-[120px]" {...field} />
+                          <RichEditor
+                            value={field.value ?? ""}
+                            onChange={field.onChange}
+                            placeholder="Escribe el párrafo introductorio de la reseña... Puedes poner texto en negrita, cambiar el tamaño, insertar fotos..."
+                            minHeight={140}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -279,11 +317,16 @@ export function ProductForm() {
                           <FormItem>
                             <FormLabel>¿Cuál es el objetivo?</FormLabel>
                             <FormControl>
-                              <Textarea {...field} />
+                              <RichEditor
+                                value={field.value ?? ""}
+                                onChange={field.onChange}
+                                placeholder="Explica el objetivo principal del producto o curso..."
+                              />
                             </FormControl>
                           </FormItem>
                         )}
                       />
+
                       <div className="grid grid-cols-2 gap-6">
                         <FormField
                           control={form.control}
@@ -293,7 +336,7 @@ export function ProductForm() {
                               <FormLabel>Ventajas (Pros)</FormLabel>
                               <FormDescription>Una por línea</FormDescription>
                               <FormControl>
-                                <Textarea className="min-h-[120px]" {...field} />
+                                <Textarea className="min-h-[120px]" placeholder="Ventaja 1&#10;Ventaja 2&#10;Ventaja 3" {...field} />
                               </FormControl>
                             </FormItem>
                           )}
@@ -306,21 +349,44 @@ export function ProductForm() {
                               <FormLabel>Desventajas (Contras)</FormLabel>
                               <FormDescription>Una por línea</FormDescription>
                               <FormControl>
-                                <Textarea className="min-h-[120px]" {...field} />
+                                <Textarea className="min-h-[120px]" placeholder="Desventaja 1&#10;Desventaja 2" {...field} />
                               </FormControl>
                             </FormItem>
                           )}
                         />
                       </div>
+
+                      <FormField
+                        control={form.control}
+                        name="methodology"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Metodología</FormLabel>
+                            <FormControl>
+                              <RichEditor
+                                value={field.value ?? ""}
+                                onChange={field.onChange}
+                                placeholder="Describe la metodología del curso o producto..."
+                              />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+
                       <div className="grid grid-cols-2 gap-6">
                         <FormField
                           control={form.control}
-                          name="methodology"
+                          name="support"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Metodología</FormLabel>
+                              <FormLabel>Soporte al alumno</FormLabel>
                               <FormControl>
-                                <Textarea {...field} />
+                                <RichEditor
+                                  value={field.value ?? ""}
+                                  onChange={field.onChange}
+                                  placeholder="¿Cómo es el soporte?"
+                                  minHeight={100}
+                                />
                               </FormControl>
                             </FormItem>
                           )}
@@ -332,24 +398,18 @@ export function ProductForm() {
                             <FormItem>
                               <FormLabel>Tiempo de dedicación</FormLabel>
                               <FormControl>
-                                <Textarea {...field} />
+                                <RichEditor
+                                  value={field.value ?? ""}
+                                  onChange={field.onChange}
+                                  placeholder="¿Cuánto tiempo hay que dedicar?"
+                                  minHeight={100}
+                                />
                               </FormControl>
                             </FormItem>
                           )}
                         />
                       </div>
-                      <FormField
-                        control={form.control}
-                        name="support"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Soporte al alumno</FormLabel>
-                            <FormControl>
-                              <Textarea {...field} />
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
+
                       <FormField
                         control={form.control}
                         name="whyImportant"
@@ -357,11 +417,16 @@ export function ProductForm() {
                           <FormItem>
                             <FormLabel>¿Por qué es importante aprender esto?</FormLabel>
                             <FormControl>
-                              <Textarea {...field} />
+                              <RichEditor
+                                value={field.value ?? ""}
+                                onChange={field.onChange}
+                                placeholder="Explica por qué es importante..."
+                              />
                             </FormControl>
                           </FormItem>
                         )}
                       />
+
                       <div className="grid grid-cols-2 gap-6">
                         <FormField
                           control={form.control}
@@ -370,7 +435,12 @@ export function ProductForm() {
                             <FormItem>
                               <FormLabel>Bonus incluidos</FormLabel>
                               <FormControl>
-                                <Textarea {...field} />
+                                <RichEditor
+                                  value={field.value ?? ""}
+                                  onChange={field.onChange}
+                                  placeholder="Lista los bonus incluidos..."
+                                  minHeight={100}
+                                />
                               </FormControl>
                             </FormItem>
                           )}
@@ -382,24 +452,18 @@ export function ProductForm() {
                             <FormItem>
                               <FormLabel>Garantía</FormLabel>
                               <FormControl>
-                                <Textarea {...field} />
+                                <RichEditor
+                                  value={field.value ?? ""}
+                                  onChange={field.onChange}
+                                  placeholder="Detalles de la garantía..."
+                                  minHeight={100}
+                                />
                               </FormControl>
                             </FormItem>
                           )}
                         />
                       </div>
-                      <FormField
-                        control={form.control}
-                        name="comparisonProduct"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Comparativa (Texto o tabla HTML)</FormLabel>
-                            <FormControl>
-                              <Textarea {...field} />
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
+
                       <FormField
                         control={form.control}
                         name="testimonials"
@@ -407,11 +471,33 @@ export function ProductForm() {
                           <FormItem>
                             <FormLabel>Testimonios destacados</FormLabel>
                             <FormControl>
-                              <Textarea {...field} />
+                              <RichEditor
+                                value={field.value ?? ""}
+                                onChange={field.onChange}
+                                placeholder="Escribe aquí los testimonios más destacados..."
+                              />
                             </FormControl>
                           </FormItem>
                         )}
                       />
+
+                      <FormField
+                        control={form.control}
+                        name="comparisonProduct"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Comparativa</FormLabel>
+                            <FormControl>
+                              <RichEditor
+                                value={field.value ?? ""}
+                                onChange={field.onChange}
+                                placeholder="Compara este producto con otros del mercado..."
+                              />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+
                       <FormField
                         control={form.control}
                         name="finalOpinion"
@@ -419,7 +505,13 @@ export function ProductForm() {
                           <FormItem>
                             <FormLabel>Opinión Final / Veredicto</FormLabel>
                             <FormControl>
-                              <Textarea className="min-h-[150px] border-primary/50" {...field} />
+                              <RichEditor
+                                value={field.value ?? ""}
+                                onChange={field.onChange}
+                                placeholder="Tu veredicto final sobre el producto o curso..."
+                                minHeight={180}
+                                className="border-primary/40"
+                              />
                             </FormControl>
                           </FormItem>
                         )}
@@ -433,32 +525,46 @@ export function ProductForm() {
                   <Card>
                     <CardContent className="pt-6 space-y-6">
                       <h3 className="font-serif text-lg font-bold">Información del Autor</h3>
-                      <div className="grid grid-cols-2 gap-6">
-                        <FormField
-                          control={form.control}
-                          name="authorName"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Nombre del Autor</FormLabel>
-                              <FormControl>
-                                <Input {...field} />
-                              </FormControl>
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={form.control}
-                          name="authorImage"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>URL Imagen del Autor</FormLabel>
-                              <FormControl>
-                                <Input placeholder="https://..." {...field} />
-                              </FormControl>
-                            </FormItem>
-                          )}
-                        />
-                      </div>
+                      <FormField
+                        control={form.control}
+                        name="authorName"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Nombre del Autor</FormLabel>
+                            <FormControl>
+                              <Input {...field} />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+
+                      {/* Author Image Upload */}
+                      <FormField
+                        control={form.control}
+                        name="authorImage"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Foto del Autor</FormLabel>
+                            <FormControl>
+                              <ImageUpload
+                                value={field.value}
+                                onChange={field.onChange}
+                                label="Subir foto del autor"
+                              />
+                            </FormControl>
+                            <FormDescription>
+                              También puedes pegar una URL:
+                            </FormDescription>
+                            <Input
+                              placeholder="https://..."
+                              value={field.value || ""}
+                              onChange={(e) => field.onChange(e.target.value)}
+                              className="mt-1"
+                            />
+                          </FormItem>
+                        )}
+                      />
+
                       <FormField
                         control={form.control}
                         name="authorBio"
@@ -466,7 +572,11 @@ export function ProductForm() {
                           <FormItem>
                             <FormLabel>Biografía / Credenciales</FormLabel>
                             <FormControl>
-                              <Textarea {...field} />
+                              <RichEditor
+                                value={field.value ?? ""}
+                                onChange={field.onChange}
+                                placeholder="Escribe aquí la biografía del autor, sus credenciales, experiencia..."
+                              />
                             </FormControl>
                           </FormItem>
                         )}
@@ -523,27 +633,6 @@ export function ProductForm() {
                 <TabsContent value="seo" className="space-y-6 mt-6">
                   <Card>
                     <CardContent className="pt-6 space-y-6">
-                      <FormField
-                        control={form.control}
-                        name="coverImage"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Imagen de Portada (URL)</FormLabel>
-                            <FormControl>
-                              <div className="flex items-center gap-4">
-                                <div className="h-20 w-32 bg-muted rounded flex items-center justify-center border border-border shrink-0 overflow-hidden">
-                                  {field.value ? (
-                                    <img src={field.value} alt="Cover" className="w-full h-full object-cover" />
-                                  ) : (
-                                    <ImageIcon className="h-6 w-6 text-muted-foreground" />
-                                  )}
-                                </div>
-                                <Input placeholder="https://..." {...field} />
-                              </div>
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
                       <FormField
                         control={form.control}
                         name="videoUrl"

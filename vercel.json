@@ -1,0 +1,9 @@
+{
+  "framework": null,
+  "installCommand": "pnpm install",
+  "buildCommand": "pnpm run typecheck:libs && pnpm --filter @workspace/cocina-opina run build",
+  "outputDirectory": "artifacts/cocina-opina/dist",
+  "rewrites": [
+    { "source": "/((?!.*\\.).*)", "destination": "/index.html" }
+  ]
+}

@@ -192,14 +192,14 @@ export function ProductReview() {
           
           {product.introduction && (
             <section id="introduccion" className="text-xl leading-relaxed text-foreground font-medium">
-              <p>{product.introduction}</p>
+              <RichContent html={product.introduction} />
             </section>
           )}
 
           {product.objective && (
             <section id="objetivo">
               <h2>¿Cuál es el objetivo principal?</h2>
-              <div className="whitespace-pre-wrap">{product.objective}</div>
+              <RichContent html={product.objective} />
             </section>
           )}
 
@@ -217,9 +217,7 @@ export function ProductReview() {
                   <h3 className="text-2xl font-serif font-bold mb-2 mt-0">
                     Conoce a {product.authorName || 'el autor'}
                   </h3>
-                  <div className="text-muted-foreground text-base whitespace-pre-wrap m-0">
-                    {product.authorBio}
-                  </div>
+                  <RichContent html={product.authorBio} className="text-muted-foreground text-base m-0" />
                 </div>
               </div>
             </section>
@@ -274,7 +272,7 @@ export function ProductReview() {
           {product.methodology && (
             <section id="metodologia">
               <h2>¿Cómo es la Metodología?</h2>
-              <div className="whitespace-pre-wrap">{product.methodology}</div>
+              <RichContent html={product.methodology} />
             </section>
           )}
 
@@ -284,7 +282,7 @@ export function ProductReview() {
                 <h3 className="flex items-center mt-0 text-xl font-serif">
                   <MessageCircle className="w-5 h-5 mr-2 text-primary" /> Soporte
                 </h3>
-                <div className="text-base whitespace-pre-wrap m-0">{product.support}</div>
+                <RichContent html={product.support} className="text-base m-0" />
               </section>
             )}
 
@@ -293,7 +291,7 @@ export function ProductReview() {
                 <h3 className="flex items-center mt-0 text-xl font-serif">
                   <Clock className="w-5 h-5 mr-2 text-primary" /> Tiempo requerido
                 </h3>
-                <div className="text-base whitespace-pre-wrap m-0">{product.timeDedication}</div>
+                <RichContent html={product.timeDedication} className="text-base m-0" />
               </section>
             )}
           </div>
@@ -301,7 +299,7 @@ export function ProductReview() {
           {product.testimonials && (
             <section id="testimonios" className="my-16">
               <blockquote className="border-l-4 border-primary pl-6 py-2 italic bg-muted/30 p-6 rounded-r-2xl m-0 shadow-sm text-foreground/80 font-serif text-xl leading-relaxed">
-                "{product.testimonials}"
+                <RichContent html={product.testimonials} />
               </blockquote>
             </section>
           )}
@@ -311,7 +309,7 @@ export function ProductReview() {
               <ShieldCheck className="w-16 h-16 text-[#D4AF37] shrink-0" />
               <div>
                 <h3 className="text-[#D4AF37] font-bold text-xl mt-0 mb-2">Garantía Protegida</h3>
-                <p className="m-0 text-white/80">{product.guarantee}</p>
+                <RichContent html={product.guarantee} className="m-0 text-white/80" />
               </div>
             </section>
           )}
@@ -319,7 +317,7 @@ export function ProductReview() {
           {product.whyImportant && (
             <section id="importancia">
               <h2>¿Por qué es importante aprender esto ahora?</h2>
-              <div className="whitespace-pre-wrap">{product.whyImportant}</div>
+              <RichContent html={product.whyImportant} />
             </section>
           )}
 
@@ -329,7 +327,7 @@ export function ProductReview() {
                 Material Extra Incluido
               </div>
               <h2 className="mt-4 mb-6 text-center text-primary">Bonus Gratuitos</h2>
-              <div className="whitespace-pre-wrap">{product.bonuses}</div>
+              <RichContent html={product.bonuses} />
             </section>
           )}
 
@@ -350,7 +348,7 @@ export function ProductReview() {
           {product.comparisonProduct && (
             <section id="comparativa">
               <h2>Comparativa</h2>
-              <div className="whitespace-pre-wrap bg-card p-8 rounded-2xl border border-border">{product.comparisonProduct}</div>
+              <RichContent html={product.comparisonProduct} className="bg-card p-8 rounded-2xl border border-border" />
             </section>
           )}
 
@@ -367,9 +365,7 @@ export function ProductReview() {
           {product.finalOpinion && (
             <section id="opinion" className="bg-card p-10 rounded-3xl border border-border shadow-md my-16 text-center">
               <h2 className="mt-0 mb-6 text-3xl">Nuestro Veredicto Final</h2>
-              <div className="text-lg leading-relaxed text-muted-foreground mb-10 whitespace-pre-wrap text-left">
-                {product.finalOpinion}
-              </div>
+              <RichContent html={product.finalOpinion} className="text-lg leading-relaxed text-muted-foreground mb-10 text-left" />
               
               <div className="flex flex-col items-center">
                 <p className="font-serif font-bold text-xl mb-6">¿Merece la pena?</p>
@@ -390,6 +386,21 @@ export function ProductReview() {
       </div>
     </article>
   );
+}
+
+/** Renders either HTML (from rich editor) or plain text, auto-detected */
+function RichContent({ html, className }: { html?: string | null; className?: string }) {
+  if (!html) return null;
+  const isHtml = /<[a-z][\s\S]*>/i.test(html);
+  if (isHtml) {
+    return (
+      <div
+        dangerouslySetInnerHTML={{ __html: html }}
+        className={className ?? "whitespace-pre-wrap"}
+      />
+    );
+  }
+  return <div className={`whitespace-pre-wrap ${className ?? ""}`}>{html}</div>;
 }
 
 function MenuIcon(props: React.SVGProps<SVGSVGElement>) {

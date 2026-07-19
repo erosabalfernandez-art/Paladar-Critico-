@@ -14,6 +14,7 @@ import { CategoryPage } from '@/pages/public/CategoryPage';
 import { AdminLogin } from '@/pages/admin/Login';
 import { AdminDashboard } from '@/pages/admin/Dashboard';
 import { ProductForm } from '@/pages/admin/ProductForm';
+import { AdminCategories } from '@/pages/admin/Categories';
 
 const queryClient = new QueryClient();
 
@@ -26,6 +27,9 @@ function Router() {
       </Route>
       <Route path="/admin/productos/:id/editar">
         <AdminLayout><ProductForm /></AdminLayout>
+      </Route>
+      <Route path="/admin/categorias">
+        <AdminLayout><AdminCategories /></AdminLayout>
       </Route>
       <Route path="/admin">
         <AdminLayout><AdminDashboard /></AdminLayout>

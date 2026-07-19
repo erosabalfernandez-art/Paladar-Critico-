@@ -163,7 +163,6 @@ router.patch("/admin/products/:id", async (req, res) => {
 
   if (!updated) return res.status(404).json({ error: "Not found" });
 
-  // Get category name
   let categoryName: string | null = null;
   if (updated.categoryId) {
     const cat = await db.select().from(categoriesTable).where(eq(categoriesTable.id, updated.categoryId)).limit(1);
@@ -177,6 +176,35 @@ router.patch("/admin/products/:id", async (req, res) => {
 router.delete("/admin/products/:id", async (req, res) => {
   const id = parseInt(req.params.id);
   await db.delete(productsTable).where(eq(productsTable.id, id));
+  res.status(204).send();
+});
+
+// ─── CATEGORY ADMIN ENDPOINTS ────────────────────────────────────────────────
+
+// POST /api/admin/categories — create a new category
+router.post("/admin/categories", async (req, res) => {
+  const { name, slug, description } = req.body as { name: string; slug: string; description?: string };
+  if (!name || !slug) {
+    return res.status(400).json({ error: "name and slug are required" });
+  }
+  try {
+    const [cat] = await db
+      .insert(categoriesTable)
+      .values({ name, slug, description: description ?? null })
+      .returning();
+    res.status(201).json(cat);
+  } catch (err: any) {
+    if (err?.code === "23505") {
+      return res.status(409).json({ error: "Slug ya existe, elige otro" });
+    }
+    throw err;
+  }
+});
+
+// DELETE /api/admin/categories/:id — remove a category
+router.delete("/admin/categories/:id", async (req, res) => {
+  const id = parseInt(req.params.id);
+  await db.delete(categoriesTable).where(eq(categoriesTable.id, id));
   res.status(204).send();
 });
 
