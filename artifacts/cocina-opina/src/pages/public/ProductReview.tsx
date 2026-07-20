@@ -315,7 +315,7 @@ export function ProductReview() {
             <section id="garantia" className="flex items-center gap-6 bg-[#2A1810] text-white p-8 rounded-2xl my-12">
               <ShieldCheck className="w-16 h-16 text-[#D4AF37] shrink-0" />
               <div>
-                <h3 className="text-[#D4AF37] font-bold text-xl mt-0 mb-2">Garantía Protegida</h3>
+                <h3 className="text-white font-bold text-xl mt-0 mb-2">Garantía Protegida</h3>
                 <RichContent html={product.guarantee} className="m-0 text-white/80" />
               </div>
             </section>
