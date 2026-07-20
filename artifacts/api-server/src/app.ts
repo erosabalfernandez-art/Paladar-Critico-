@@ -31,6 +31,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(sitemapRouter);
+
+// Google Search Console verification
+app.get("/googlec21461f4f27d199f.html", (_req, res) => {
+  res.type("text/html").send("google-site-verification: googlec21461f4f27d199f.html");
+});
+
 app.use("/api", router);
 
 export default app;
