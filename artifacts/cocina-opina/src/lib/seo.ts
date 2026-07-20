@@ -9,7 +9,11 @@ export interface SeoConfig {
   keywords?: string;
   canonical?: string;
   ogImage?: string;
+  ogImageAlt?: string;
   ogType?: "website" | "article";
+  articlePublishedTime?: string;
+  articleModifiedTime?: string;
+  articleAuthor?: string;
   jsonLd?: object | object[];
 }
 
@@ -26,6 +30,12 @@ function setMeta(name: string, content: string, prop = false) {
     document.head.appendChild(el);
   }
   el.setAttribute("content", content);
+}
+
+function removeMeta(name: string, prop = false) {
+  const attr = prop ? "property" : "name";
+  const el = document.querySelector<HTMLMetaElement>(`meta[${attr}="${name}"]`);
+  if (el) el.remove();
 }
 
 function setLink(rel: string, href: string) {
@@ -56,7 +66,11 @@ export function applySeo(config: SeoConfig) {
     keywords,
     canonical,
     ogImage = DEFAULT_OG_IMAGE,
+    ogImageAlt,
     ogType = "website",
+    articlePublishedTime,
+    articleModifiedTime,
+    articleAuthor,
     jsonLd,
   } = config;
 
@@ -83,15 +97,30 @@ export function applySeo(config: SeoConfig) {
   setMeta("og:image", ogImage, true);
   setMeta("og:image:width", "1200", true);
   setMeta("og:image:height", "630", true);
+  setMeta("og:image:alt", ogImageAlt || fullTitle, true);
   setMeta("og:site_name", SITE_NAME, true);
   setMeta("og:url", canonicalHref, true);
   setMeta("og:locale", "es_ES", true);
+
+  // Article-specific Open Graph metas
+  if (ogType === "article") {
+    if (articlePublishedTime) setMeta("article:published_time", articlePublishedTime, true);
+    if (articleModifiedTime) setMeta("article:modified_time", articleModifiedTime, true);
+    if (articleAuthor) setMeta("article:author", articleAuthor, true);
+    setMeta("article:section", "Reseñas culinarias", true);
+  } else {
+    removeMeta("article:published_time", true);
+    removeMeta("article:modified_time", true);
+    removeMeta("article:author", true);
+    removeMeta("article:section", true);
+  }
 
   // Twitter
   setMeta("twitter:card", "summary_large_image");
   setMeta("twitter:title", fullTitle);
   setMeta("twitter:description", description);
   setMeta("twitter:image", ogImage);
+  setMeta("twitter:image:alt", ogImageAlt || fullTitle);
   setMeta("twitter:site", "@PaladarCritico");
 
   // JSON-LD
@@ -108,24 +137,21 @@ export const organizationLd = {
   name: SITE_NAME,
   url: SITE_URL,
   logo: `${SITE_URL}/logo.png`,
-  sameAs: [],
+  sameAs: [
+    // Añade aquí tus redes sociales cuando las tengas:
+    // "https://www.instagram.com/paladar_critico",
+    // "https://www.youtube.com/@PaladarCritico",
+  ],
   description:
     "La referencia número uno en reseñas de cursos de cocina, recetarios y métodos culinarios. Análisis profundos, honestos e independientes.",
 };
 
+// WebSite schema — sin SearchAction porque no existe página /buscar
 export const websiteLd = {
   "@context": "https://schema.org",
   "@type": "WebSite",
   name: SITE_NAME,
   url: SITE_URL,
-  potentialAction: {
-    "@type": "SearchAction",
-    target: {
-      "@type": "EntryPoint",
-      urlTemplate: `${SITE_URL}/buscar?q={search_term_string}`,
-    },
-    "query-input": "required name=search_term_string",
-  },
 };
 
 export const breadcrumbLd = (items: { name: string; url: string }[]) => ({
@@ -154,12 +180,27 @@ export const faqLd = (
   })),
 });
 
+export const itemListLd = (
+  items: { name: string; url: string; image?: string | null; position: number }[]
+) => ({
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  itemListElement: items.map((item) => ({
+    "@type": "ListItem",
+    position: item.position,
+    name: item.name,
+    url: item.url,
+    ...(item.image ? { image: item.image } : {}),
+  })),
+});
+
 export const reviewArticleLd = (product: {
   title: string;
   slug: string;
   rating: number;
   description: string;
   coverImage?: string | null;
+  createdAt?: string;
   updatedAt: string;
   authorName?: string | null;
 }) => ({
@@ -179,6 +220,7 @@ export const reviewArticleLd = (product: {
   },
   publisher: organizationLd,
   description: product.description,
+  datePublished: product.createdAt || product.updatedAt,
   dateModified: product.updatedAt,
   image: product.coverImage || `${SITE_URL}/hero.jpg`,
 });

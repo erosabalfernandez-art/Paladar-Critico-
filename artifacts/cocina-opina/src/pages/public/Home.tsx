@@ -5,7 +5,7 @@ import { ArrowRight, Star, ChevronRight, PlayCircle, ChefHat, GraduationCap, Boo
 import { Button } from "@/components/ui/button";
 import { MarqueeBanner } from "@/components/ui/marquee-banner";
 import { FaqSection, FAQ_ITEMS } from "@/components/sections/FaqSection";
-import { applySeo, faqLd, websiteLd, organizationLd } from "@/lib/seo";
+import { applySeo, faqLd, websiteLd, organizationLd, itemListLd } from "@/lib/seo";
 
 /* ─── Fade-up wrapper ─────────────────────────────────────────────────────── */
 function FadeUp({
@@ -51,6 +51,28 @@ export function Home() {
   const { data: latestProducts } = useListProducts({ limit: 4 });
 
   useEffect(() => {
+    const jsonLd: object[] = [websiteLd, organizationLd, faqLd(FAQ_ITEMS)];
+
+    const allProducts = [
+      ...(featured ?? []),
+      ...(latestProducts?.products ?? []),
+    ];
+    const uniqueProducts = allProducts.filter(
+      (p, i, arr) => arr.findIndex((x) => x.id === p.id) === i
+    );
+    if (uniqueProducts.length > 0) {
+      jsonLd.push(
+        itemListLd(
+          uniqueProducts.map((p, i) => ({
+            position: i + 1,
+            name: p.title,
+            url: `https://www.paladar-critico.com/opiniones/${p.slug}`,
+            image: p.coverImage,
+          }))
+        )
+      );
+    }
+
     applySeo({
       title: "Paladar Crítico | Reseñas de Cursos de Cocina, Recetarios y Métodos",
       description:
@@ -58,13 +80,9 @@ export function Home() {
       keywords:
         "cursos de cocina online, reseñas cursos cocina, mejores libros de cocina, recetarios recomendados, opiniones cursos gastronomía, aprender a cocinar, cursos cocina profesional",
       canonical: "https://www.paladar-critico.com/",
-      jsonLd: [
-        websiteLd,
-        organizationLd,
-        faqLd(FAQ_ITEMS),
-      ],
+      jsonLd,
     });
-  }, []);
+  }, [featured, latestProducts]);
 
   return (
     <div className="w-full overflow-x-hidden">

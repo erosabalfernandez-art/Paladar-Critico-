@@ -3,4 +3,4 @@ Allow: /
 Disallow: /admin/
 Disallow: /api/
 
-Sitemap: https://www.paladar-critico.com/sitemap.xml
+Sitemap: https://paladar-critico-api.onrender.com/sitemap.xml

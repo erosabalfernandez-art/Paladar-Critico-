@@ -1,7 +1,7 @@
 import { useLocation, useParams } from "wouter";
 import { useGetProductBySlug, getGetProductBySlugQueryKey } from "@workspace/api-client-react";
 import { useEffect } from "react";
-import { applySeo, reviewArticleLd, breadcrumbLd } from "@/lib/seo";
+import { applySeo, reviewArticleLd, breadcrumbLd, organizationLd } from "@/lib/seo";
 import { Star, CheckCircle2, XCircle, ChevronRight, ShieldCheck, Clock, MessageCircle, PlayCircle, ExternalLink, Award } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -13,17 +13,22 @@ export function ProductReview() {
 
   useEffect(() => {
     if (product) {
+      const description =
+        product.seoDescription ||
+        `Análisis completo de ${product.title}: ventajas, desventajas, precio y nuestra opinión honesta. ¿Vale la pena? Te lo contamos todo.`;
       applySeo({
         title: product.seoTitle || `${product.title} — Reseña y Opiniones`,
-        description:
-          product.seoDescription ||
-          `Análisis completo de ${product.title}: ventajas, desventajas, precio y nuestra opinión honesta. ¿Vale la pena? Te lo contamos todo.`,
+        description,
         keywords:
           product.seoKeywords ||
           `${product.title}, reseña ${product.title}, opiniones ${product.title}, análisis ${product.title}`,
         canonical: `https://www.paladar-critico.com/opiniones/${product.slug}`,
         ogImage: product.coverImage || undefined,
+        ogImageAlt: `Reseña de ${product.title} — Paladar Crítico`,
         ogType: "article",
+        articlePublishedTime: product.createdAt,
+        articleModifiedTime: product.updatedAt,
+        articleAuthor: product.authorName || "Equipo Paladar Crítico",
         jsonLd: [
           reviewArticleLd({
             title: product.title,
@@ -34,6 +39,7 @@ export function ProductReview() {
               product.introduction ||
               `Reseña completa de ${product.title}`,
             coverImage: product.coverImage,
+            createdAt: product.createdAt,
             updatedAt: product.updatedAt,
             authorName: product.authorName,
           }),
@@ -44,6 +50,7 @@ export function ProductReview() {
               : []),
             { name: product.title, url: `https://www.paladar-critico.com/opiniones/${product.slug}` },
           ]),
+          organizationLd,
         ],
       });
     }

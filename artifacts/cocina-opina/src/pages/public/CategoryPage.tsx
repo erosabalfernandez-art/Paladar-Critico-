@@ -2,7 +2,7 @@ import { useParams, Link } from "wouter";
 import { useListProducts, useListCategories } from "@workspace/api-client-react";
 import { Star, PlayCircle, ArrowRight } from "lucide-react";
 import { useEffect, useMemo } from "react";
-import { applySeo, breadcrumbLd } from "@/lib/seo";
+import { applySeo, breadcrumbLd, itemListLd } from "@/lib/seo";
 
 export function CategoryPage() {
   const { slug } = useParams();
@@ -15,6 +15,24 @@ export function CategoryPage() {
 
   useEffect(() => {
     if (category) {
+      const jsonLd: object[] = [
+        breadcrumbLd([
+          { name: "Inicio", url: "https://www.paladar-critico.com/" },
+          { name: category.name, url: `https://www.paladar-critico.com/categoria/${category.slug}` },
+        ]),
+      ];
+      if (products.length > 0) {
+        jsonLd.push(
+          itemListLd(
+            products.map((p, i) => ({
+              position: i + 1,
+              name: p.title,
+              url: `https://www.paladar-critico.com/opiniones/${p.slug}`,
+              image: p.coverImage,
+            }))
+          )
+        );
+      }
       applySeo({
         title: `${category.name} | Reseñas y Opiniones`,
         description:
@@ -22,13 +40,10 @@ export function CategoryPage() {
           `Las mejores reseñas de ${category.name.toLowerCase()} analizadas en profundidad. Descubre qué vale la pena comprar antes de invertir.`,
         keywords: `${category.name.toLowerCase()}, reseñas ${category.name.toLowerCase()}, mejores ${category.name.toLowerCase()}, comparativa ${category.name.toLowerCase()}`,
         canonical: `https://www.paladar-critico.com/categoria/${category.slug}`,
-        jsonLd: breadcrumbLd([
-          { name: "Inicio", url: "https://www.paladar-critico.com/" },
-          { name: category.name, url: `https://www.paladar-critico.com/categoria/${category.slug}` },
-        ]),
+        jsonLd,
       });
     }
-  }, [category]);
+  }, [category, products]);
 
   const products = response?.products || [];
 
