@@ -22,7 +22,7 @@ export function ProductReview() {
         keywords:
           product.seoKeywords ||
           `${product.title}, reseña ${product.title}, opiniones ${product.title}, análisis ${product.title}`,
-        canonical: `https://www.paladar-critico.com/opiniones/${product.slug}`,
+        canonical: `https://paladar-critico-web.onrender.com/opiniones/${product.slug}`,
         ogImage: product.coverImage || undefined,
         ogImageAlt: `Reseña de ${product.title} — Paladar Crítico`,
         ogType: "article",
@@ -44,11 +44,11 @@ export function ProductReview() {
             authorName: product.authorName,
           }),
           breadcrumbLd([
-            { name: "Inicio", url: "https://www.paladar-critico.com/" },
+            { name: "Inicio", url: "https://paladar-critico-web.onrender.com/" },
             ...(product.categoryName
-              ? [{ name: product.categoryName, url: `https://www.paladar-critico.com/categoria/${product.categoryId}` }]
+              ? [{ name: product.categoryName, url: `https://paladar-critico-web.onrender.com/categoria/${product.categoryId}` }]
               : []),
-            { name: product.title, url: `https://www.paladar-critico.com/opiniones/${product.slug}` },
+            { name: product.title, url: `https://paladar-critico-web.onrender.com/opiniones/${product.slug}` },
           ]),
           organizationLd,
         ],

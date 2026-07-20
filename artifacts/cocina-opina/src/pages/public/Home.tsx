@@ -66,7 +66,7 @@ export function Home() {
           uniqueProducts.map((p, i) => ({
             position: i + 1,
             name: p.title,
-            url: `https://www.paladar-critico.com/opiniones/${p.slug}`,
+            url: `https://paladar-critico-web.onrender.com/opiniones/${p.slug}`,
             image: p.coverImage,
           }))
         )
@@ -79,7 +79,7 @@ export function Home() {
         "Reseñas honestas y análisis profundos de los mejores cursos de cocina online, recetarios y métodos culinarios. Descubre qué vale la pena comprar antes de invertir.",
       keywords:
         "cursos de cocina online, reseñas cursos cocina, mejores libros de cocina, recetarios recomendados, opiniones cursos gastronomía, aprender a cocinar, cursos cocina profesional",
-      canonical: "https://www.paladar-critico.com/",
+      canonical: "https://paladar-critico-web.onrender.com/",
       jsonLd,
     });
   }, [featured, latestProducts]);

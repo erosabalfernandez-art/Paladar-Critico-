@@ -5,7 +5,7 @@ import { eq } from "drizzle-orm";
 
 const router = Router();
 
-const SITE_URL = "https://www.paladar-critico.com";
+const SITE_URL = "https://paladar-critico-web.onrender.com";
 
 function escapeXml(str: string): string {
   return str

@@ -18,7 +18,7 @@ export interface SeoConfig {
 }
 
 const SITE_NAME = "Paladar Crítico";
-const SITE_URL = "https://www.paladar-critico.com";
+const SITE_URL = "https://paladar-critico-web.onrender.com";
 const DEFAULT_OG_IMAGE = `${SITE_URL}/hero.jpg`;
 
 function setMeta(name: string, content: string, prop = false) {

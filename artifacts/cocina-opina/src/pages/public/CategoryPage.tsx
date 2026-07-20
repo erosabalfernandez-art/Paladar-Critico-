@@ -17,8 +17,8 @@ export function CategoryPage() {
     if (category) {
       const jsonLd: object[] = [
         breadcrumbLd([
-          { name: "Inicio", url: "https://www.paladar-critico.com/" },
-          { name: category.name, url: `https://www.paladar-critico.com/categoria/${category.slug}` },
+          { name: "Inicio", url: "https://paladar-critico-web.onrender.com/" },
+          { name: category.name, url: `https://paladar-critico-web.onrender.com/categoria/${category.slug}` },
         ]),
       ];
       if (products.length > 0) {
@@ -27,7 +27,7 @@ export function CategoryPage() {
             products.map((p, i) => ({
               position: i + 1,
               name: p.title,
-              url: `https://www.paladar-critico.com/opiniones/${p.slug}`,
+              url: `https://paladar-critico-web.onrender.com/opiniones/${p.slug}`,
               image: p.coverImage,
             }))
           )
@@ -39,7 +39,7 @@ export function CategoryPage() {
           category.description ||
           `Las mejores reseñas de ${category.name.toLowerCase()} analizadas en profundidad. Descubre qué vale la pena comprar antes de invertir.`,
         keywords: `${category.name.toLowerCase()}, reseñas ${category.name.toLowerCase()}, mejores ${category.name.toLowerCase()}, comparativa ${category.name.toLowerCase()}`,
-        canonical: `https://www.paladar-critico.com/categoria/${category.slug}`,
+        canonical: `https://paladar-critico-web.onrender.com/categoria/${category.slug}`,
         jsonLd,
       });
     }
