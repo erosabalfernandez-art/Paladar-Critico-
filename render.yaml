@@ -22,13 +22,15 @@ services:
   # ── FRONTEND (Sitio web) ───────────────────────────────────────
   - type: web
     name: paladar-critico-web
-    env: node
+    env: static
     region: frankfurt
     plan: free
-    buildCommand: npm install -g pnpm && pnpm install && pnpm run typecheck:libs && pnpm --filter @workspace/cocina-opina run build
-    startCommand: node ./artifacts/cocina-opina/server.js
+    buildCommand: npm install -g pnpm && pnpm install && node artifacts/cocina-opina/scripts/generate-sitemap.mjs && pnpm run typecheck:libs && pnpm --filter @workspace/cocina-opina run build
+    staticPublishPath: ./artifacts/cocina-opina/dist/public
     envVars:
-      - key: NODE_ENV
-        value: production
       - key: VITE_API_URL
         sync: false          # pega aquí la URL del backend (paladar-critico-api)
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
