@@ -12,7 +12,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const API_URL =
   process.env.VITE_API_URL || "https://paladar-critico-api.onrender.com";
 const SITE_URL = "https://paladar-critico-web.onrender.com";
-const OUT = resolve(__dirname, "../public/sitemap.xml");
+const OUT = resolve(__dirname, "../dist/public/sitemap.xml");
 
 console.log(`[sitemap] Fetching from ${API_URL}/sitemap.xml ...`);
 
