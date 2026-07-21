@@ -3,7 +3,4 @@ Allow: /
 Disallow: /admin/
 Disallow: /api/
 
-Sitemap: https://paladar-critico-api.onrender.com/sitemap.xml
-
-# Dominio principal
-# https://paladar-critico-web.onrender.com
+Sitemap: https://paladar-critico-web.onrender.com/sitemap.xml
