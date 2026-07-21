@@ -139,19 +139,33 @@ export function Home() {
                   accent: "text-primary",
                   num: "01",
                 },
+                libros: {
+                  icon: <BookOpen strokeWidth={1.2} className="w-10 h-10" />,
+                  desc: "Descubre los mejores recursos culinarios.",
+                  gradient: "from-[#2A1810] to-[#4a2218]",
+                  accent: "text-primary",
+                  num: "02",
+                },
                 metodos: {
                   icon: <Flame strokeWidth={1.2} className="w-10 h-10" />,
                   desc: "Técnicas culinarias probadas en profundidad: sous vide, fermentación, brasa y más.",
                   gradient: "from-[#1a1a2e] to-[#2d2d4a]",
                   accent: "text-blue-300",
-                  num: "02",
+                  num: "03",
                 },
-                recetas: {
-                  icon: <BookOpen strokeWidth={1.2} className="w-10 h-10" />,
-                  desc: "Los mejores libros de cocina y colecciones gastronómicas analizados con rigor.",
+                recetarios: {
+                  icon: <ChefHat strokeWidth={1.2} className="w-10 h-10" />,
+                  desc: "Colecciones completas de recetas analizadas en profundidad. Encuentra el recetario ideal para tu estilo de vida.",
                   gradient: "from-[#1a2a1a] to-[#2d4a2d]",
                   accent: "text-emerald-300",
-                  num: "03",
+                  num: "04",
+                },
+                recetas: {
+                  icon: <ChefHat strokeWidth={1.2} className="w-10 h-10" />,
+                  desc: "Colecciones completas de recetas analizadas en profundidad.",
+                  gradient: "from-[#1a2a1a] to-[#2d4a2d]",
+                  accent: "text-emerald-300",
+                  num: "04",
                 },
               };
               const cfg = config[cat.slug] ?? {

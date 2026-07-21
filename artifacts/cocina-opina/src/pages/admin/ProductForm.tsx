@@ -3,9 +3,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useLocation, useParams } from "wouter";
 import { useCreateProduct, useUpdateProduct, useListCategories, useListAdminProducts } from "@workspace/api-client-react";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import { ArrowLeft, Save, Loader2 } from "lucide-react";
+import { ArrowLeft, Save, Loader2, GraduationCap, BookOpen, Flame, ChefHat, CheckCircle2 } from "lucide-react";
 import { Link } from "wouter";
 
 import { Button } from "@/components/ui/button";
@@ -168,6 +168,34 @@ export function ProductForm() {
 
   const isPending = createProduct.isPending || updateProduct.isPending;
 
+  // Category visual config for the prominent selector
+  const categoryConfig: Record<string, { icon: React.ReactNode; gradient: string; accent: string; desc: string }> = {
+    cursos: {
+      icon: <GraduationCap strokeWidth={1.2} className="w-8 h-8" />,
+      gradient: "from-[#2A1810] to-[#4a2218]",
+      accent: "border-amber-700 ring-amber-700/30",
+      desc: "Cursos de cocina online y programas formativos",
+    },
+    libros: {
+      icon: <BookOpen strokeWidth={1.2} className="w-8 h-8" />,
+      gradient: "from-[#2A1810] to-[#4a2218]",
+      accent: "border-amber-700 ring-amber-700/30",
+      desc: "Libros y recursos culinarios",
+    },
+    metodos: {
+      icon: <Flame strokeWidth={1.2} className="w-8 h-8" />,
+      gradient: "from-[#1a1a2e] to-[#2d2d4a]",
+      accent: "border-blue-500 ring-blue-500/30",
+      desc: "Técnicas y metodologías culinarias",
+    },
+    recetarios: {
+      icon: <ChefHat strokeWidth={1.2} className="w-8 h-8" />,
+      gradient: "from-[#1a2a1a] to-[#2d4a2d]",
+      accent: "border-emerald-600 ring-emerald-600/30",
+      desc: "Colecciones de recetas",
+    },
+  };
+
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20">
       <div className="flex items-center justify-between">
@@ -192,6 +220,63 @@ export function ProductForm() {
       </div>
 
       <Form {...form}>
+        {/* ── Prominent category picker (only on new product) ─────────────── */}
+        {!isEditing && (
+          <Card className="border-2 border-primary/20 bg-primary/5 mb-6">
+            <CardHeader className="pb-4">
+              <CardTitle className="font-serif text-xl">
+                ¿Dónde quieres añadir este producto?
+              </CardTitle>
+              <p className="text-sm text-muted-foreground">Selecciona la categoría antes de continuar</p>
+            </CardHeader>
+            <CardContent>
+              <FormField
+                control={form.control}
+                name="categoryId"
+                render={({ field }) => (
+                  <FormItem>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      {categories?.map((cat) => {
+                        const cfg = categoryConfig[cat.slug] ?? {
+                          icon: <ChefHat strokeWidth={1.2} className="w-8 h-8" />,
+                          gradient: "from-[#2A1810] to-[#4a2218]",
+                          accent: "border-amber-700 ring-amber-700/30",
+                          desc: cat.slug,
+                        };
+                        const isSelected = field.value === cat.id;
+                        return (
+                          <button
+                            key={cat.id}
+                            type="button"
+                            onClick={() => field.onChange(cat.id)}
+                            className={`relative rounded-xl overflow-hidden border-2 transition-all duration-200 focus:outline-none ${
+                              isSelected
+                                ? `${cfg.accent} ring-4 scale-[1.03] shadow-lg`
+                                : "border-border hover:border-primary/40 hover:scale-[1.01]"
+                            }`}
+                          >
+                            <div className={`bg-gradient-to-br ${cfg.gradient} p-6 flex flex-col items-center text-center gap-3`}>
+                              {isSelected && (
+                                <div className="absolute top-2 right-2 bg-white rounded-full p-0.5">
+                                  <CheckCircle2 className="w-4 h-4 text-primary" />
+                                </div>
+                              )}
+                              <div className="text-white">{cfg.icon}</div>
+                              <span className="font-serif text-lg font-bold text-white">{cat.name}</span>
+                              <span className="text-xs text-white/60 leading-tight">{cfg.desc}</span>
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                    <FormMessage className="mt-2" />
+                  </FormItem>
+                )}
+              />
+            </CardContent>
+          </Card>
+        )}
+
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             

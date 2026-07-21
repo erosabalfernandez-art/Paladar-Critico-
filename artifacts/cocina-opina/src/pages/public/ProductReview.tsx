@@ -1,8 +1,8 @@
-import { useLocation, useParams } from "wouter";
+import { useLocation, useParams, Link } from "wouter";
 import { useGetProductBySlug, getGetProductBySlugQueryKey } from "@workspace/api-client-react";
 import { useEffect } from "react";
 import { applySeo, reviewArticleLd, breadcrumbLd, organizationLd } from "@/lib/seo";
-import { Star, CheckCircle2, XCircle, ChevronRight, ShieldCheck, Clock, MessageCircle, PlayCircle, ExternalLink, Award } from "lucide-react";
+import { Star, CheckCircle2, XCircle, ChevronRight, ShieldCheck, Clock, MessageCircle, PlayCircle, ExternalLink, Award, ArrowLeft, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function ProductReview() {
@@ -69,7 +69,12 @@ export function ProductReview() {
       <div className="min-h-[70vh] flex flex-col items-center justify-center text-center px-4">
         <h1 className="text-4xl font-serif font-bold mb-4">Reseña no encontrada</h1>
         <p className="text-muted-foreground mb-8">No pudimos encontrar la reseña que buscas.</p>
-        <Button onClick={() => window.location.href = "/"}>Volver al inicio</Button>
+        <Link href="/">
+          <Button>
+            <ArrowLeft className="mr-2 w-4 h-4" />
+            Volver al inicio
+          </Button>
+        </Link>
       </div>
     );
   }
@@ -123,6 +128,29 @@ export function ProductReview() {
 
   return (
     <article className="min-h-screen bg-background">
+      {/* Quick nav back */}
+      <div className="bg-background/80 backdrop-blur border-b border-border/40 py-3">
+        <div className="container mx-auto px-4 flex items-center gap-4 text-sm">
+          <Link href="/" className="inline-flex items-center gap-1.5 text-muted-foreground hover:text-primary transition-colors font-medium">
+            <Home className="w-3.5 h-3.5" />
+            Inicio
+          </Link>
+          <span className="text-border">›</span>
+          {product.categoryName && (
+            <>
+              <Link
+                href={`/categoria/${product.categoryId}`}
+                className="text-muted-foreground hover:text-primary transition-colors font-medium"
+              >
+                {product.categoryName}
+              </Link>
+              <span className="text-border">›</span>
+            </>
+          )}
+          <span className="text-foreground font-medium truncate max-w-[200px]">{product.title}</span>
+        </div>
+      </div>
+
       {/* HERO SECTION */}
       <header className={`relative ${headerClass} overflow-hidden`}>
         {!isMinimal && !isModern && (
@@ -390,6 +418,28 @@ export function ProductReview() {
           )}
 
         </main>
+      </div>
+
+      {/* Bottom navigation bar */}
+      <div className="border-t border-border bg-card py-8">
+        <div className="container mx-auto px-4 max-w-6xl flex flex-col sm:flex-row items-center justify-between gap-4">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary font-medium transition-colors"
+          >
+            <Home className="w-4 h-4" />
+            Volver a la página principal
+          </Link>
+          {product.categoryName && (
+            <Link
+              href={`/categoria/${product.categoryId}`}
+              className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary font-medium transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Más reseñas de {product.categoryName}
+            </Link>
+          )}
+        </div>
       </div>
     </article>
   );
