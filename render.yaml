@@ -31,6 +31,10 @@ services:
       - key: VITE_API_URL
         sync: false          # pega aquí la URL del backend (paladar-critico-api)
     routes:
+      - type: redirect
+        source: /sitemap.xml
+        destination: https://paladar-critico-api.onrender.com/sitemap.xml
+        permanent: true
       - type: rewrite
         source: /*
         destination: /index.html
